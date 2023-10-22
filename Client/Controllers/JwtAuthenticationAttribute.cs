@@ -9,7 +9,7 @@ namespace Client.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var token = context.HttpContext.Session.GetString("JWTToken");
+            var token = context.HttpContext.Session.GetString("Token");
 
             if (string.IsNullOrWhiteSpace(token))
             {
