@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Client.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace Client.Controllers
 {
@@ -30,17 +31,31 @@ namespace Client.Controllers
         public async Task<IActionResult> Index()
         {
 
-            HttpResponseMessage response = await client.GetAsync(ProductApiUrl);
-            string stringData = await response.Content.ReadAsStringAsync();
-
-
-            var options = new JsonSerializerOptions
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
             {
-                PropertyNameCaseInsensitive = true
-            };
+                return RedirectToAction("Login", "Users", null);
 
-            List<ProductVm> listProducts = JsonSerializer.Deserialize<List<ProductVm>>(stringData, options);
-            return View(listProducts);
+            }
+            var request = new HttpRequestMessage(HttpMethod.Get, ProductApiUrl);
+
+
+            request.Headers.Add("Authorization", "Bearer " + token);
+            var response = await client.SendAsync(request);
+
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                string strData = await response.Content.ReadAsStringAsync();
+                var data = JsonSerializer.Deserialize<List<ProductVm>>(strData, options);
+                return View(data);
+            }
+            return RedirectToAction("Error", "Home", null);
         }
 
 
@@ -67,7 +82,7 @@ namespace Client.Controllers
                     };
                     ProductVm product = JsonSerializer.Deserialize<ProductVm>(productData, options);
 
-                   return View(product);
+                    return View(product);
 
                 }
             }
@@ -150,7 +165,7 @@ namespace Client.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,ProductVm product)
+        public async Task<IActionResult> Edit(int id, ProductVm product)
         {
             if (id != product.Id)
             {

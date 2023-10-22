@@ -47,8 +47,13 @@ namespace Client.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     // save JWT token to session
-                    var token = await response.Content.ReadAsStringAsync();
-                    HttpContext.Session.SetString("JWTToken", token);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    string strData = await response.Content.ReadAsStringAsync();
+                    var data = JsonSerializer.Deserialize<LoginResponse>(strData, options);
+                    HttpContext.Session.SetString("Token", data.Data.ToString());
 
                     HttpContext.Session.SetString("email", request.Email);
                     return RedirectToAction("Index", "Products");
