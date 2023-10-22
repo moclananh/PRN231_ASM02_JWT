@@ -43,8 +43,6 @@ namespace Client.Controllers
             request.Headers.Add("Authorization", "Bearer " + token);
             var response = await client.SendAsync(request);
 
-
-
             if (response.IsSuccessStatusCode)
             {
                 var options = new JsonSerializerOptions
@@ -70,12 +68,20 @@ namespace Client.Controllers
 
             try
             {
-                // Make a request to your API to get the product by id
-                HttpResponseMessage productResponse = await client.GetAsync($"https://localhost:5001/api/Products/{id}");
-
-                if (productResponse.IsSuccessStatusCode)
+                var token = HttpContext.Session.GetString("Token");
+                if (token == null)
                 {
-                    string productData = await productResponse.Content.ReadAsStringAsync();
+                    return RedirectToAction("Login", "Users", null);
+
+                }
+                var request = new HttpRequestMessage(HttpMethod.Get, ProductApiUrl+$"/{id}");
+
+                request.Headers.Add("Authorization", "Bearer " + token);
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string productData = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
@@ -107,10 +113,20 @@ namespace Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductVm product)
         {
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Users", null);
+            }
+
             if (ModelState.IsValid)
             {
                 var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(ProductApiUrl, content);
+                var request = new HttpRequestMessage(HttpMethod.Post, ProductApiUrl);
+                request.Headers.Add("Authorization", "Bearer " + token);
+                request.Content = content;
+
+                var response = await client.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -135,14 +151,22 @@ namespace Client.Controllers
                 return NotFound();
             }
 
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Users", null);
+            }
+
             try
             {
-                // Make a request to your API to get the product by id
-                HttpResponseMessage productResponse = await client.GetAsync($"https://localhost:5001/api/Products/{id}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{ProductApiUrl}/{id}");
+                request.Headers.Add("Authorization", "Bearer " + token);
 
-                if (productResponse.IsSuccessStatusCode)
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string productData = await productResponse.Content.ReadAsStringAsync();
+                    string productData = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
@@ -167,6 +191,12 @@ namespace Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductVm product)
         {
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Users", null);
+            }
+
             if (id != product.Id)
             {
                 return NotFound();
@@ -175,7 +205,11 @@ namespace Client.Controllers
             if (ModelState.IsValid)
             {
                 var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PutAsync($"{ProductApiUrl}/{id}", content);
+                var request = new HttpRequestMessage(HttpMethod.Put, $"{ProductApiUrl}/{id}");
+                request.Headers.Add("Authorization", "Bearer " + token);
+                request.Content = content;
+
+                var response = await client.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -199,14 +233,22 @@ namespace Client.Controllers
                 return NotFound();
             }
 
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Users", null);
+            }
+
             try
             {
-                // Make a request to your API to get the product by id
-                HttpResponseMessage productResponse = await client.GetAsync($"https://localhost:5001/api/Products/{id}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{ProductApiUrl}/{id}");
+                request.Headers.Add("Authorization", "Bearer " + token);
 
-                if (productResponse.IsSuccessStatusCode)
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string productData = await productResponse.Content.ReadAsStringAsync();
+                    string productData = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
@@ -228,7 +270,16 @@ namespace Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            HttpResponseMessage response = await client.DeleteAsync($"{ProductApiUrl}/{id}");
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Users", null);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{ProductApiUrl}/{id}");
+            request.Headers.Add("Authorization", "Bearer " + token);
+
+            var response = await client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
