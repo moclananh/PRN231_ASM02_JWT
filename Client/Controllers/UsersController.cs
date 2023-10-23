@@ -113,7 +113,7 @@ namespace Client.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Login", "Authentication");
+                    return RedirectToAction("Login", "Users");
                 }
                 else
                 {

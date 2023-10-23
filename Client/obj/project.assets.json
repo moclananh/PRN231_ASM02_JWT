@@ -7555,11 +7555,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\FU_Hub\\FA23\\PRN231\\prn231_asm02_jwt\\Client\\Client.csproj",
+      "projectUniqueName": "D:\\FU_Hub\\FA23\\PRN231\\Asm\\prn231_asm02_jwt\\Client\\Client.csproj",
       "projectName": "Client",
-      "projectPath": "D:\\FU_Hub\\FA23\\PRN231\\prn231_asm02_jwt\\Client\\Client.csproj",
+      "projectPath": "D:\\FU_Hub\\FA23\\PRN231\\Asm\\prn231_asm02_jwt\\Client\\Client.csproj",
       "packagesPath": "C:\\Users\\Kristino\\.nuget\\packages\\",
-      "outputPath": "D:\\FU_Hub\\FA23\\PRN231\\prn231_asm02_jwt\\Client\\obj\\",
+      "outputPath": "D:\\FU_Hub\\FA23\\PRN231\\Asm\\prn231_asm02_jwt\\Client\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
